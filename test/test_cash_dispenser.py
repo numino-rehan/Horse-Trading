@@ -1,8 +1,8 @@
 import pytest
 from utils.exceptions import InsufficientFundsError
 from config.constants import DENOMINATIONS, MAX_STOCK
-from core.inventory_manager import InventoryManager
-from core.cash_dispenser import CashDispenser
+from model.inventory_manager import InventoryManager
+from model.cash_dispenser import CashDispenser
 
 
 # Mock InventoryManager class for testing

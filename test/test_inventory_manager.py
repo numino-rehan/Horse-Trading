@@ -1,5 +1,5 @@
 import pytest
-from core.inventory_manager import InventoryManager
+from model.inventory_manager import InventoryManager
 from config.constants import DENOMINATIONS, MAX_STOCK
 from utils.exceptions import RestockError
 

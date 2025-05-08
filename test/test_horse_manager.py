@@ -1,5 +1,5 @@
 import pytest
-from core.horse_manager import HorseManager
+from model.horse_manager import HorseManager
 from config.constants import HORSE_DATA
 from utils.exceptions import InvalidHorseNumberError
 

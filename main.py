@@ -1,4 +1,4 @@
-from core.command_processor import CommandProcessor
+from model.command_processor import CommandProcessor
 
 def runATMMachine():
     # Create an instance of CommandProcessor which integrates all functionalities
