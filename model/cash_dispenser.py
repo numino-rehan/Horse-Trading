@@ -1,4 +1,4 @@
-from utils.exceptions import InsufficientFundsError
+from exceptions.machine_exceptions import InsufficientFundsError
 from colorama import Fore, Style
 from copy import deepcopy
 

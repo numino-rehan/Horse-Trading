@@ -1,5 +1,5 @@
 import pytest
-from utils.exceptions import InsufficientFundsError
+from exceptions.machine_exceptions import InsufficientFundsError
 from config.constants import DENOMINATIONS, MAX_STOCK
 from model.inventory_manager import InventoryManager
 from model.cash_dispenser import CashDispenser

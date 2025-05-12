@@ -1,5 +1,5 @@
 from config.constants import HORSE_DATA
-from utils.exceptions import InvalidHorseNumberError
+from exceptions.horse_exceptions import InvalidHorseNumberError
 from colorama import Fore, Style
 
 class HorseManager:
@@ -16,8 +16,8 @@ class HorseManager:
         print(Fore.GREEN + f'Set "{self.horse_data[horse_id]["name"]}" (Horse #{horse_id}) as the winning horse.')
         print()
 
-    def show_horse_data(self):
-        print(Fore.BLUE + Style.BRIGHT + "HORSES:")
+    def __str__(self):
+        lines = [Fore.BLUE + Style.BRIGHT + "HORSES:"]
         for horse_id, data in self.horse_data.items():
             name = data["name"]
             odds = data.get("odds", "N/A")
@@ -26,8 +26,13 @@ class HorseManager:
             status_color = Fore.GREEN if won else Fore.RED
             status_text = "WON" if won else "LOST"
 
-            print(f"{Fore.YELLOW}{horse_id}{Style.RESET_ALL}, "
+            lines.append(f"{Fore.YELLOW}{horse_id}{Style.RESET_ALL}, "
                   f"{Fore.CYAN}{name}{Style.RESET_ALL}, "
                   f"{Fore.WHITE}{odds}{Style.RESET_ALL}, "
                   f"{status_color}{status_text}")
+        return "\n".join(lines)
+    
+    def show_horse_data(self):
+        print(self)
         print()
+   

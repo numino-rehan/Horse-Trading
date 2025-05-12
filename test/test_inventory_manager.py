@@ -1,7 +1,7 @@
 import pytest
 from model.inventory_manager import InventoryManager
 from config.constants import DENOMINATIONS, MAX_STOCK
-from utils.exceptions import RestockError
+from exceptions.machine_exceptions import RestockError
 
 def test_initial_inventory():
     manager = InventoryManager()

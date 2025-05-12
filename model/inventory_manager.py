@@ -1,5 +1,5 @@
 from config.constants import DENOMINATIONS, MAX_STOCK
-from utils.exceptions import RestockError
+from exceptions.machine_exceptions import RestockError
 from colorama import Fore, Style
 
 class InventoryManager:
@@ -9,13 +9,16 @@ class InventoryManager:
     def restock(self):
         try:
             self.inventory = {denominations: MAX_STOCK for denominations in sorted(DENOMINATIONS)}
-            print(Fore.GREEN + "Restocking Complete")
-            print()
+            print(Fore.GREEN + "Restocking Complete\n")
         except Exception as e:
             raise RestockError from e
 
-    def show_inventory(self):
-        print(Fore.BLUE + Style.BRIGHT + "INVENTORY:")
+    def __str__(self):
+        lines = [Fore.BLUE + Style.BRIGHT + "INVENTORY:"]
         for den, qty in self.inventory.items():
-            print(Fore.YELLOW + f"${den:.2f}" + Fore.WHITE + f" x {qty}")
+            lines.append(Fore.YELLOW + f"${den:.2f}" + Fore.WHITE + f" x {qty}")
+        return "\n".join(lines)
+
+    def show_inventory(self):
+        print(self)  # Calls __str__()
         print()
