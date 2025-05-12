@@ -17,7 +17,7 @@ A simple terminal-based horse betting simulation game built with Python and mana
 1. **Clone the repository**
    ```bash
    git clone <repo-name>
-   cd horse-betting-machine
+   cd horse-trading
    ```
 
 2. **Install dependencies using Poetry**
