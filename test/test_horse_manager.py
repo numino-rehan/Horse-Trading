@@ -1,7 +1,7 @@
 import pytest
-from model.horse_manager import HorseManager
+from model import HorseManager
 from config.constants import HORSE_DATA
-from exceptions.horse_exceptions import InvalidHorseNumberError
+from exceptions import (InvalidHorseNumberException)
 
 def test_initial_horse_data():
     manager = HorseManager()
@@ -16,7 +16,7 @@ def test_set_winner_valid():
 def test_set_winner_invalid():
     manager = HorseManager()
     invalid_id = 999
-    with pytest.raises(InvalidHorseNumberError):
+    with pytest.raises(InvalidHorseNumberException):
         manager.set_winner(invalid_id)
 
 def test_show_horse_data_output(capsys):

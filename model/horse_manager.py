@@ -1,5 +1,5 @@
 from config.constants import HORSE_DATA
-from exceptions.horse_exceptions import InvalidHorseNumberError
+from exceptions import (InvalidHorseNumberException)
 from colorama import Fore, Style
 
 class HorseManager:
@@ -11,7 +11,7 @@ class HorseManager:
 
     def set_winner(self, horse_id, won=True):
         if horse_id < 1 or horse_id > len(self.horse_data):
-            raise InvalidHorseNumberError(horse_id)
+            raise InvalidHorseNumberException(horse_id)
         self.horse_data[horse_id]["won"] = won
         print(Fore.GREEN + f'Set "{self.horse_data[horse_id]["name"]}" (Horse #{horse_id}) as the winning horse.')
         print()

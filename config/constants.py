@@ -13,3 +13,11 @@ HORSE_DATA = {
     6: {"name": "Pa Kettle", "odds": 5,"won":False},
     7: {"name": "Gin Stinger", "odds": 7,"won":False}
 }
+
+
+COMMAND_LIST = {
+    "quit": "q",
+    "restock": "r",
+    "winner": "w",
+    "bet": "bet",
+}

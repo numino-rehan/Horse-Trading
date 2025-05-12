@@ -1,16 +1,13 @@
+from config.constants import COMMAND_LIST
 from .inventory_manager import InventoryManager
 from .horse_manager import HorseManager
 from .cash_dispenser import CashDispenser
-from .commands.command_context import CommandContext
-from .commands.registry_command import CommandRegistry
-from .commands.quit_command import QuitCommand
-from .commands.restock_command import RestockCommand
-from .commands.show_inventory_command import ShowInventory
 
-from model.commands.winner_command import WinnerCommand
-from model.commands.bet_command import BetCommand
-from exceptions.command_exceptions import InvalidCommandError
+from exceptions import (InvalidCommandException)
 from colorama import Fore
+
+from command import (BetCommand, QuitCommand, RestockCommand, WinnerCommand)
+from command_core import (CommandContext, CommandRegistry)
 
 class CommandProcessor:
     def __init__(self):
@@ -24,11 +21,10 @@ class CommandProcessor:
 
         # Setup command registry
         self.registry = CommandRegistry()
-        self.registry.register("q", QuitCommand())
-        self.registry.register("r", RestockCommand())
-        self.registry.register("w", WinnerCommand())
-        self.registry.register("bet", BetCommand()) 
-        self.registry.register("s",ShowInventory())
+        self.registry.register(COMMAND_LIST["quit"], QuitCommand())
+        self.registry.register(COMMAND_LIST["restock"], RestockCommand())
+        self.registry.register(COMMAND_LIST["winner"], WinnerCommand())
+        self.registry.register(COMMAND_LIST["bet"], BetCommand())
          # generic handler for "1 50" style
 
     def process_commands(self, command):
@@ -49,7 +45,7 @@ class CommandProcessor:
                 args = cmd_parts[1:]
 
             if not command_obj:
-                raise InvalidCommandError(command)
+                raise InvalidCommandException(command)
 
             command_obj.execute(args, self.context)
 
