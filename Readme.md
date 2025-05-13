@@ -30,7 +30,7 @@ A simple terminal-based horse betting simulation game built with Python and mana
 ### Running the Application
 
 ```bash
-poetry run python main.py
+poetry run poe start
 ```
 
 
@@ -38,7 +38,7 @@ poetry run python main.py
 ### Running Tests
 
 ```bash
-poetry run python -m pytest test
+poetry run poe test
 ```
 
 ### Adding Dependencies

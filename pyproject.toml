@@ -22,5 +22,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "8.3.5"
+poethepoet = "^0.34.0"
+
+[tool.poe.tasks]
+start = "python main.py"
+test = "python -m pytest test/"
 
 
