@@ -1,4 +1,4 @@
-from utils.exceptions import InsufficientFundsError
+from exceptions import (InsufficientFundsException)
 from colorama import Fore, Style
 from copy import deepcopy
 
@@ -19,7 +19,7 @@ class CashDispenser:
                 remaining = round(remaining - denomination, 2)
 
         if remaining > 0:
-            raise InsufficientFundsError()
+            raise InsufficientFundsException()
 
         return dispensed, temp_inventory
 
@@ -28,7 +28,7 @@ class CashDispenser:
         try:
             dispensed, updated_inventory = self.can_dispense(amount)
             self.inventory_manager.inventory = updated_inventory
-        except InsufficientFundsError:
+        except InsufficientFundsException:
             raise
 
         print(Fore.GREEN + "Dispensing Cash:")

@@ -1,34 +1,59 @@
-#  Horse Betting Machine
+# Horse Betting Machine - Python Terminal Game
 
-A simple terminal-based horse betting machine simulation in Python.
+![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
+![Poetry](https://img.shields.io/badge/packaging-poetry-cyan)
 
----
+A simple terminal-based horse betting simulation game built with Python and managed with Poetry.
 
-## 🛠 How to Run
+## 🏁 Getting Started
 
-### ▶ Prerequisites
+### Prerequisites
 
-- Python 3.x installed  
-- Python added to your system's PATH (on Windows)
+- Python 3.8 or higher
+- Poetry installed (recommended)
 
-### ▶ Running the Script
+### Installation
 
-1. Open a terminal or command prompt  
-2. Navigate to the project directory  
-3. Install required dependencies:
+1. **Clone the repository**
+   ```bash
+   git clone <repo-name>
+   cd horse-trading
+   ```
+
+2. **Install dependencies using Poetry**
+   ```bash
+   poetry install
+   ```
+
+
+
+### Running the Application
 
 ```bash
-pip install -r requirements.txt
+poetry run poe start
 ```
 
-4. Run the Script
 
-``` bash
-python main.py
-```
 
-5. Testing Instruction
+### Running Tests
 
 ```bash
-pytest -s
+poetry run poe test
 ```
+
+### Adding Dependencies
+
+To add a new dependency:
+```bash
+poetry add package-name
+```
+
+
+
+## 📜 Features
+
+- Simple terminal interface
+- Multiple horse races
+- Betting system with virtual money
+- Random race outcomes
+- Colorful terminal output

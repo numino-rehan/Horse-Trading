@@ -1,8 +1,7 @@
 import pytest
-from utils.exceptions import InsufficientFundsError
+from exceptions import (InsufficientFundsException)
 from config.constants import DENOMINATIONS, MAX_STOCK
-from model.inventory_manager import InventoryManager
-from model.cash_dispenser import CashDispenser
+from model import (InventoryManager,CashDispenser)
 
 
 # Mock InventoryManager class for testing
@@ -52,5 +51,5 @@ def test_dispense_cash(cash_dispenser):
 def test_insufficient_funds_error(cash_dispenser):
     # Test dispensing cash with insufficient funds
     amount = 99999  # Exceeds the available amount
-    with pytest.raises(InsufficientFundsError):
+    with pytest.raises(InsufficientFundsException):
         cash_dispenser.dispense_cash(amount)

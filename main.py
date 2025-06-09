@@ -1,4 +1,4 @@
-from model.command_processor import CommandProcessor
+from model import CommandProcessor
 
 def runATMMachine():
     # Create an instance of CommandProcessor which integrates all functionalities
@@ -9,7 +9,6 @@ def runATMMachine():
     # Run command loop
     while True:
          # Show initial inventory and horse data
-        print(processor.inventory_manager.inventory)
         processor.inventory_manager.show_inventory()
         processor.horse_manager.show_horse_data()
         command = input(
