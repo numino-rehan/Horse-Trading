@@ -4,7 +4,8 @@ horse_manager.py
 Handles management of horse data including race outcomes, display, and validation.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 from colorama import Fore, Style
 
 from config.constants import HORSE_DATA
@@ -23,8 +24,14 @@ class HorseManager:
         """
         Initialize the HorseManager with predefined horse data.
         """
-        self.horse_data: Dict[int, Dict[str, Any]] = self.generate_horse_data()
-        logger.debug("HorseManager initialized with predefined horse data.")
+        try:
+            self.horse_data: Dict[int, Dict[str, Any]
+                                  ] = self.generate_horse_data()
+            logger.debug(
+                "HorseManager initialized with predefined horse data.")
+        except Exception:
+            logger.error("Failed to initialize HorseManager.", exc_info=True)
+            raise
 
     def generate_horse_data(self) -> Dict[int, Dict[str, Any]]:
         """
@@ -33,8 +40,12 @@ class HorseManager:
         Returns:
             Dict[int, Dict[str, Any]]: Mapping of horse IDs to their data.
         """
-        logger.debug("Generating horse data from constants.")
-        return HORSE_DATA
+        try:
+            logger.debug("Generating horse data from constants.")
+            return HORSE_DATA
+        except Exception:
+            logger.error("Failed to generate horse data.", exc_info=True)
+            raise
 
     def set_winner(self, horse_id: int, won: bool = True) -> None:
         """
@@ -47,22 +58,33 @@ class HorseManager:
         Raises:
             InvalidHorseNumberException: If the horse_id is invalid.
         """
-        if horse_id not in self.horse_data:
-            logger.error(f"Invalid horse ID: {horse_id}")
-            raise InvalidHorseNumberException(horse_id)
+        try:
+            if horse_id not in self.horse_data:
+                message = f"Invalid horse ID: {horse_id}"
+                logger.error(message)
+                raise InvalidHorseNumberException(message)
 
-        for hid in self.horse_data:
-            self.horse_data[hid]["won"] = False  # Reset all to lost
-        self.horse_data[horse_id]["won"] = won
+            for hid in self.horse_data:
+                self.horse_data[hid]["won"] = False  # Reset all to lost
+            self.horse_data[horse_id]["won"] = won
 
-        logger.info(
-            f'Horse #{horse_id} ("{self.horse_data[horse_id]["name"]}") '
-            f'marked as {"winner" if won else "not winner"}.'
-        )
+            logger.info(
+                f'Horse #{horse_id} ("{self.horse_data[horse_id]["name"]}") '
+                f'marked as {"winner" if won else "not winner"}.'
+            )
 
-        print(
-            Fore.GREEN + f'Set "{self.horse_data[horse_id]["name"]}" (Horse #{horse_id}) as the winning horse.')
-        print(Style.RESET_ALL)
+            print(
+                Fore.GREEN +
+                f'Set "{self.horse_data[horse_id]["name"]}" (Horse #{horse_id}) as the winning horse.'
+            )
+            print(Style.RESET_ALL)
+
+        except InvalidHorseNumberException:
+            raise
+        except Exception:
+            logger.error(
+                f"Error setting winner for Horse #{horse_id}.", exc_info=True)
+            raise
 
     def __str__(self) -> str:
         """
@@ -71,27 +93,35 @@ class HorseManager:
         Returns:
             str: Formatted horse data with colors for terminal display.
         """
-        lines = [Fore.BLUE + Style.BRIGHT + "HORSES:" + Style.RESET_ALL]
-        for horse_id, data in self.horse_data.items():
-            name = data.get("name", "Unknown")
-            odds = data.get("odds", "N/A")
-            won = data.get("won", False)
+        try:
+            lines = [Fore.BLUE + Style.BRIGHT + "HORSES:" + Style.RESET_ALL]
+            for horse_id, data in self.horse_data.items():
+                name = data.get("name", "Unknown")
+                odds = data.get("odds", "N/A")
+                won = data.get("won", False)
 
-            status_color = Fore.GREEN if won else Fore.RED
-            status_text = "WON" if won else "LOST"
+                status_color = Fore.GREEN if won else Fore.RED
+                status_text = "WON" if won else "LOST"
 
-            lines.append(
-                f"{Fore.YELLOW}{horse_id}{Style.RESET_ALL}, "
-                f"{Fore.CYAN}{name}{Style.RESET_ALL}, "
-                f"{Fore.WHITE}{odds}{Style.RESET_ALL}, "
-                f"{status_color}{status_text}{Style.RESET_ALL}"
-            )
-        return "\n".join(lines)
+                lines.append(
+                    f"{Fore.YELLOW}{horse_id}{Style.RESET_ALL}, "
+                    f"{Fore.CYAN}{name}{Style.RESET_ALL}, "
+                    f"{Fore.WHITE}{odds}{Style.RESET_ALL}, "
+                    f"{status_color}{status_text}{Style.RESET_ALL}"
+                )
+            return "\n".join(lines)
+        except Exception:
+            logger.error("Failed to format horse data output.", exc_info=True)
+            raise
 
     def show_horse_data(self) -> None:
         """
         Print the current horse data to the console.
         """
-        logger.debug("Displaying horse data to console.")
-        print(self)
-        print()
+        try:
+            logger.debug("Displaying horse data to console.")
+            print(self)
+            print()
+        except Exception:
+            logger.error("Failed to display horse data.", exc_info=True)
+            raise

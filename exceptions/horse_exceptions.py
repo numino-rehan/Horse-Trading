@@ -19,6 +19,6 @@ class InvalidHorseNumberException(HorseException):
         >>> raise InvalidHorseNumberException("ABC123")
         InvalidHorseNumberException: Invalid Horse Number: ABC123
     """
-    def __init__(self, horse_id):
-        self.message = f"Invalid Horse Number: {horse_id}"
+    def __init__(self, message):
+        self.message = message
         super().__init__(self.message)

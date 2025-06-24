@@ -1,5 +1,6 @@
 import sys
-from command_core import (CommandContext, BaseCommand)
+
+from command_core import BaseCommand, CommandContext
 from utils.loger_config import setup_logger
 
 logger = setup_logger("command.quit_command")
@@ -18,7 +19,10 @@ class QuitCommand(BaseCommand):
             args (str): Command-line arguments (ignored in this command).
             context (CommandContext): The application context (not used here).
         """
-        logger.info("Quit command received. Exiting application now.")
-        # Optional: print a goodbye message to user
-        print("Thank you for using the application. Goodbye!")
-        sys.exit(0)
+        try:
+            logger.info("Quit command received. Exiting application now.")
+            print("Thank you for using the application. Goodbye!")
+            sys.exit(0)
+        except Exception:
+            logger.error("Failed to exit application gracefully.", exc_info=True)
+            raise

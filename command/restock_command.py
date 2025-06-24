@@ -1,4 +1,4 @@
-from command_core import CommandContext, BaseCommand
+from command_core import BaseCommand, CommandContext
 from exceptions.machine_exceptions import RestockException
 from utils.loger_config import setup_logger
 

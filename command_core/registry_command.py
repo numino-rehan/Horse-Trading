@@ -1,7 +1,8 @@
-
 from typing import Dict, Optional
-from .base_command import BaseCommand
+
 from utils.loger_config import setup_logger
+
+from .base_command import BaseCommand
 
 logger = setup_logger("command_core.command_registry")
 
@@ -15,8 +16,12 @@ class CommandRegistry:
         """
         Initialize an empty command registry.
         """
-        self.commands: Dict[str, BaseCommand] = {}
-        logger.debug("CommandRegistry initialized with empty command map.")
+        try:
+            self.commands: Dict[str, BaseCommand] = {}
+            logger.debug("CommandRegistry initialized with empty command map.")
+        except Exception:
+            logger.error("Failed to initialize CommandRegistry.", exc_info=True)
+            raise
 
     def register(self, keyword: str, command_obj: BaseCommand) -> None:
         """
@@ -26,13 +31,21 @@ class CommandRegistry:
             keyword (str): The keyword used to invoke the command.
             command_obj (BaseCommand): The command object to be registered.
         """
-        if keyword in self.commands:
-            logger.warning(
-                f"Overwriting existing command for keyword '{keyword}'.")
+        try:
+            if keyword in self.commands:
+                logger.warning(
+                    f"Overwriting existing command for keyword '{keyword}'."
+                )
 
-        self.commands[keyword] = command_obj
-        logger.info(
-            f"Command registered: '{keyword}' -> {command_obj.__class__.__name__}")
+            self.commands[keyword] = command_obj
+            logger.info(
+                f"Command registered: '{keyword}' -> {command_obj.__class__.__name__}"
+            )
+        except Exception:
+            logger.error(
+                f"Failed to register command '{keyword}'.", exc_info=True
+            )
+            raise
 
     def get(self, keyword: str) -> Optional[BaseCommand]:
         """
@@ -44,11 +57,17 @@ class CommandRegistry:
         Returns:
             Optional[BaseCommand]: The corresponding command object, or None if not found.
         """
-        command = self.commands.get(keyword)
-        if command:
-            logger.debug(
-                f"Retrieved command for keyword '{keyword}': {command.__class__.__name__}")
-        else:
-            logger.warning(
-                f"No command found for keyword: '{keyword}'")
-        return command
+        try:
+            command = self.commands.get(keyword)
+            if command:
+                logger.debug(
+                    f"Retrieved command for keyword '{keyword}': {command.__class__.__name__}"
+                )
+            else:
+                logger.warning(f"No command found for keyword: '{keyword}'")
+            return command
+        except Exception:
+            logger.error(
+                f"Failed to retrieve command for keyword '{keyword}'.", exc_info=True
+            )
+            raise

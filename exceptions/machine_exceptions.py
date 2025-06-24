@@ -1,6 +1,6 @@
 
 class MachineException(Exception):
-    
+
     pass
 
 
@@ -14,12 +14,13 @@ class InsufficientFundsException(MachineException):
     Attributes:
         message (str): The error message indicating insufficient funds.
     """
-    def __init__(self):
-        self.message = "Insufficient funds in machine."
+
+    def __init__(self, message):
+        self.message = message
         super().__init__(self.message)
 
 
 class RestockException(MachineException):
-    def __init__(self):
-        self.message = "Error during restocking."
+    def __init__(self, message):
+        self.message = message
         super().__init__(self.message)

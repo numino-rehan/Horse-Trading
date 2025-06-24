@@ -1,7 +1,11 @@
-import logging
-from exceptions import InvalidBetAmountException, InvalidHorseNumberException, InsufficientFundsException, InvalidCommandException, RestockException
-from utils.loger_config import setup_logger
+
+from colorama import Fore, Style
+
+from exceptions import (InsufficientFundsException, InvalidBetAmountException,
+                        InvalidCommandException, InvalidHorseNumberException,
+                        RestockException)
 from services import CommandProcessor
+from utils.loger_config import setup_logger
 
 logger = setup_logger("main")
 
@@ -37,26 +41,42 @@ def runATMMachine() -> None:
         print("______________________________")
 
         try:
-            logging.info(f"Processing command: {command}")
+            if not command:
+                raise InvalidCommandException("Command cannot be empty.")
+            logger.info(f"Processing command: {command}")
             processor.process_commands(command)
-        except InvalidBetAmountException as e:
-            logging.error(f"Invalid bet amount: {e}")
-            print(f"Error: {e}\n")
         except InvalidCommandException as e:
-            logging.error(f"Invalid command: {e}")
-            print(f"Error: {e}\n")
+            logger.error(f"Invalid command: {e}")
+            print(
+                Fore.RED + "Invalid command. Please check the format and try again.\n" + Style.RESET_ALL)
+
         except InvalidHorseNumberException as e:
-            logging.error(f"Invalid horse number: {e}")
-            print(f"Error: {e}\n")
+            logger.error(f"Invalid horse number: {e}")
+            print(
+                Fore.RED + "Invalid horse number. Please enter a number from the list.\n" + Style.RESET_ALL)
+
+        except InvalidBetAmountException as e:
+            logger.error(f"Invalid bet amount: {e}")
+            print(
+                Fore.RED + "Invalid bet amount. Please enter a positive number.\n" + Style.RESET_ALL)
+
         except InsufficientFundsException as e:
-            logging.error(f"Insufficient funds: {e}")
-            print(f"Error: {e}\n")
+            logger.error(f"Insufficient funds: {e}")
+            print(
+                Fore.RED + "Cannot dispense winnings. The machine has insufficient funds.\n" + Style.RESET_ALL)
+
         except RestockException as e:
-            logging.error(f"Restock failed: {e}")
-            print(f"Error: {e}\n")
+            logger.error(f"Restock failed: {e}")
+            print(
+                Fore.RED + "Error occurred while restocking. Please try again.\n" + Style.RESET_ALL)
+
         except Exception as exc:
-            logging.error(f"Error processing command '{command}': {exc}")
-            print(f"Error: {exc}\n")
+            logger.error(
+                f"Unexpected error while processing command '{command}': {exc}",
+                exc_info=True
+            )
+            print(
+                Fore.RED + "An unexpected error occurred. Please contact support.\n" + Style.RESET_ALL)
 
 
 if __name__ == "__main__":

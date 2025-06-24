@@ -1,11 +1,8 @@
 from colorama import Fore
 
-from command_core import CommandContext, BaseCommand
-from exceptions import (
-    InvalidCommandException,
-    InvalidBetAmountException,
-    InvalidHorseNumberException
-)
+from command_core import BaseCommand, CommandContext
+from exceptions import (InvalidBetAmountException, InvalidCommandException,
+                        InvalidHorseNumberException)
 from utils.loger_config import setup_logger
 
 logger = setup_logger("command.bet_command")
@@ -19,48 +16,66 @@ class BetCommand(BaseCommand):
     """
 
     def execute(self, args: str, context: CommandContext) -> None:
-        logger.debug(f"Executing BetCommand with args: '{args}'")
-        print("-->", type(args))
-        args_list = args.split()
-        if len(args_list) != 2:
-            logger.error(
-                f"Invalid number of arguments for bet command: '{args}'")
-            raise InvalidCommandException(" ".join(args_list))
+        try:
+            logger.debug(f"Executing BetCommand with args: '{args}'")
 
-        horse_id_str, amount_str = args_list
+            args_list = args.split()
+            if len(args_list) != 2:
+                message = f"Invalid number of arguments for bet command: '{args}'"
+                logger.error(message)
+                raise InvalidCommandException(message)
 
-        if not horse_id_str.isdigit():
-            logger.error(f"Horse ID is not numeric: '{horse_id_str}'")
-            raise InvalidHorseNumberException(horse_id_str)
-        if not amount_str.isdigit():
-            logger.error(f"Bet amount is not numeric: '{amount_str}'")
-            raise InvalidBetAmountException(amount_str)
+            horse_id_str, amount_str = args_list
 
-        horse_id = int(horse_id_str)
-        amount = int(amount_str)
+            if not horse_id_str.isdigit():
+                message = f"Horse ID is not numeric: '{horse_id_str}'"
+                logger.error(message)
+                raise InvalidHorseNumberException(message)
 
-        if horse_id < 1 or horse_id > len(context.horse_manager.horse_data):
-            logger.error(
-                f"Invalid horse number: {horse_id}. Must be between 1 and {len(context.horse_manager.horse_data)}")
-            raise InvalidHorseNumberException(horse_id)
+            if not amount_str.isdigit():
+                message = f"Bet amount is not numeric: '{amount_str}'"
+                logger.error(message)
+                raise InvalidBetAmountException(message)
 
-        if amount <= 0:
-            logger.error(f"Invalid bet amount: {amount}. Must be positive.")
-            raise InvalidBetAmountException(amount)
+            horse_id = int(horse_id_str)
+            amount = int(amount_str)
 
-        horse = context.horse_manager.horse_data[horse_id]
-        logger.info(
-            f"Placing bet: Horse ID={horse_id}, Horse Name='{horse['name']}', Amount=${amount}")
+            if horse_id not in context.horse_manager.horse_data:
+                message = (
+                    f"Invalid horse number: {horse_id}. "
+                    f"Must be between 1 and {len(context.horse_manager.horse_data)}"
+                )
+                logger.error(message)
+                raise InvalidHorseNumberException(message)
 
-        if horse["won"]:
-            winnings = amount * horse["odds"]
+            if amount <= 0:
+                message = f"Invalid bet amount: {amount}. Must be positive."
+                logger.error(message)
+                raise InvalidBetAmountException(message)
+
+            horse = context.horse_manager.horse_data[horse_id]
             logger.info(
-                f"Bet won! Horse '{horse['name']}' won with odds {horse['odds']}. Winnings: ${winnings}")
-            print(f"Payout: {horse['name']}, ${winnings}")
-            context.cash_dispenser.dispense_cash(winnings)
-            logger.debug(f"Dispensed ${winnings} to the user.")
-        else:
-            logger.info(f"Bet lost. Horse '{horse['name']}' did not win.")
-            print(Fore.YELLOW + f"No Payout: {horse['name']}\n")
+                f"Placing bet: Horse ID={horse_id}, Horse Name='{horse['name']}', Amount=${amount}"
+            )
 
-        logger.debug("BetCommand execution finished.")
+            if horse["won"]:
+                winnings = amount * horse["odds"]
+                logger.info(
+                    f"Bet won! Horse '{horse['name']}' won with odds {horse['odds']}. Winnings: ${winnings}"
+                )
+                print(f"Payout: {horse['name']}, ${winnings}")
+                context.cash_dispenser.dispense_cash(winnings)
+                logger.debug(f"Dispensed ${winnings} to the user.")
+            else:
+                logger.info(f"Bet lost. Horse '{horse['name']}' did not win.")
+                print(Fore.YELLOW + f"No Payout: {horse['name']}\n")
+
+            logger.debug("BetCommand execution finished.")
+
+        except (InvalidHorseNumberException, InvalidBetAmountException, InvalidCommandException):
+            raise  # Let custom, known exceptions bubble up to be handled by caller
+
+        except Exception:
+            logger.error(
+                "Unexpected error in BetCommand execution.", exc_info=True)
+            raise

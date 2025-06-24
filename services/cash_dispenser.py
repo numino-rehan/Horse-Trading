@@ -1,4 +1,3 @@
-
 from copy import deepcopy
 from typing import Dict, Tuple
 
@@ -23,6 +22,7 @@ class CashDispenser:
         Args:
             inventory_manager (InventoryManager): Manages the inventory of cash denominations.
         """
+
         self.inventory_manager = inventory_manager
         logger.debug("CashDispenser initialized.")
 
@@ -41,27 +41,37 @@ class CashDispenser:
                 - dispensed (Dict[float, int]): Denominations and counts to be dispensed.
                 - updated_inventory (Dict[float, int]): Inventory after hypothetical dispensing.
         """
-        remaining = round(amount, 2)
-        dispensed: Dict[float, int] = {}
-        temp_inventory = deepcopy(self.inventory_manager.inventory)
+        try:
+            remaining = round(amount, 2)
+            dispensed: Dict[float, int] = {}
+            temp_inventory = deepcopy(self.inventory_manager.inventory)
 
-        logger.debug(
-            f"Trying to dispense ${remaining:.2f} using inventory: {temp_inventory}")
-
-        for denomination in sorted(temp_inventory.keys(), reverse=True):
-            while remaining >= denomination and temp_inventory[denomination] > 0:
-                dispensed[denomination] = dispensed.get(denomination, 0) + 1
-                temp_inventory[denomination] -= 1
-                remaining = round(remaining - denomination, 2)
-
-        if remaining > 0:
-            logger.error(
-                f"Insufficient funds: cannot dispense ${amount:.2f}. Short by ${remaining:.2f}."
+            logger.debug(
+                f"Attempting to dispense ${remaining:.2f} using inventory: {temp_inventory}"
             )
-            raise InsufficientFundsException()
 
-        logger.debug(f"Dispense plan: {dispensed}")
-        return dispensed, temp_inventory
+            for denomination in sorted(temp_inventory.keys(), reverse=True):
+                while remaining >= denomination and temp_inventory[denomination] > 0:
+                    dispensed[denomination] = dispensed.get(
+                        denomination, 0) + 1
+                    temp_inventory[denomination] -= 1
+                    remaining = round(remaining - denomination, 2)
+
+            if remaining > 0:
+                message = (
+                    f"Unable to dispense ${amount:.2f}. Short by ${remaining:.2f}."
+                )
+                logger.error(message)
+                raise InsufficientFundsException(message)
+
+            logger.debug(f"Dispense plan created: {dispensed}")
+            return dispensed, temp_inventory
+
+        except InsufficientFundsException:
+            raise  # Reraise known issue
+        except Exception:
+            logger.error("Unexpected error in can_dispense().", exc_info=True)
+            raise
 
     def dispense_cash(self, amount: float) -> None:
         """
@@ -77,15 +87,18 @@ class CashDispenser:
             dispensed, updated_inventory = self.can_dispense(amount)
             self.inventory_manager.inventory = updated_inventory
             logger.info(f"Successfully dispensed: {dispensed}")
-        except InsufficientFundsException:
-            logger.warning(
-                f"Cash dispense failed: Insufficient funds for ${amount:.2f}.")
-            raise
 
-        print(Fore.GREEN + "Dispensing Cash:" + Style.RESET_ALL)
-        for denom, count in sorted(dispensed.items()):
-            print(
-                Fore.YELLOW + f"${denom:.2f}:" +
-                Fore.WHITE + f" {count}" + Style.RESET_ALL
-            )
-        print()
+            print(Fore.GREEN + "Dispensing Cash:" + Style.RESET_ALL)
+            for denom, count in sorted(dispensed.items()):
+                print(
+                    Fore.YELLOW + f"${denom:.2f}:" +
+                    Fore.WHITE + f" {count}" + Style.RESET_ALL
+                )
+            print()
+
+        except InsufficientFundsException as e:
+            logger.warning(str(e))
+            raise
+        except Exception:
+            logger.error("Unexpected error in dispense_cash().", exc_info=True)
+            raise

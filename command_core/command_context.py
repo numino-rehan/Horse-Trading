@@ -1,5 +1,4 @@
-
-from model import InventoryManager, HorseManager
+from model import HorseManager, InventoryManager
 from services import CashDispenser
 from utils.loger_config import setup_logger
 
@@ -30,12 +29,17 @@ class CommandContext:
             horse_manager (HorseManager): Instance managing horse data and winner state.
             cash_dispenser (CashDispenser): Instance responsible for cash transactions.
         """
-        self.inventory_manager = inventory_manager
-        self.horse_manager = horse_manager
-        self.cash_dispenser = cash_dispenser
+        try:
+            self.inventory_manager = inventory_manager
+            self.horse_manager = horse_manager
+            self.cash_dispenser = cash_dispenser
 
-        logger.debug(
-            "CommandContext initialized with inventory, horse, and cash managers.")
+            logger.debug(
+                "CommandContext initialized with inventory, horse, and cash managers."
+            )
+        except Exception:
+            logger.error("Failed to initialize CommandContext.", exc_info=True)
+            raise
 
     def __str__(self) -> str:
         """
@@ -44,9 +48,13 @@ class CommandContext:
         Returns:
             str: Human-readable summary of context components.
         """
-        return (
-            f"CommandContext("
-            f"inventory_manager={self.inventory_manager.__class__.__name__}, "
-            f"horse_manager={self.horse_manager.__class__.__name__}, "
-            f"cash_dispenser={self.cash_dispenser.__class__.__name__})"
-        )
+        try:
+            return (
+                f"CommandContext("
+                f"inventory_manager={self.inventory_manager.__class__.__name__}, "
+                f"horse_manager={self.horse_manager.__class__.__name__}, "
+                f"cash_dispenser={self.cash_dispenser.__class__.__name__})"
+            )
+        except Exception:
+            logger.error("Failed to stringify CommandContext.", exc_info=True)
+            raise

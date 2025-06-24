@@ -1,7 +1,9 @@
 import pytest
-from model import HorseManager
+
 from config.constants import HORSE_DATA
-from exceptions import (InvalidHorseNumberException)
+from exceptions import InvalidHorseNumberException
+from model import HorseManager
+
 
 def test_initial_horse_data():
     manager = HorseManager()

@@ -1,6 +1,7 @@
-import pytest
-from model import InventoryManager
+
 from config.constants import DENOMINATIONS, MAX_STOCK
+from model import InventoryManager
+
 
 def test_initial_inventory():
     manager = InventoryManager()

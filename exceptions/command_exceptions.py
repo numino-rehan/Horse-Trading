@@ -16,6 +16,6 @@ class InvalidCommandException(CommandException):
     Attributes:
         message (str): Error message indicating which command was invalid.
     """
-    def __init__(self, command):
-        self.message = f"Invalid Command: {command}"
+    def __init__(self, message):
+        self.message = message
         super().__init__(self.message)

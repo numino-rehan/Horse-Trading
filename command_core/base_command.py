@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
-from .command_context import CommandContext
+
 from utils.loger_config import setup_logger
+
+from .command_context import CommandContext
 
 logger = setup_logger("command_core.base_command")
 
@@ -24,5 +26,10 @@ class BaseCommand(ABC):
         Raises:
             NotImplementedError: If the method is not implemented by a subclass.
         """
+        logger.error(
+            "BaseCommand.execute() called directly without subclass implementation.",
+            exc_info=True
+        )
         raise NotImplementedError(
-            "Each command must implement the execute method.")
+            "Each command must implement the execute method."
+        )

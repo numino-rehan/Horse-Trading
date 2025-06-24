@@ -1,0 +1,4 @@
+poetry run ruff check . --fix
+poetry run isort .
+poetry export -f requirements.txt --without-urls --without-hashes --output requirements.txt
+poetry run python main.py
