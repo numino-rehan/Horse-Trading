@@ -11,6 +11,5 @@ class InvalidBetAmountException(BetException):
     """
 
     def __init__(self, message: str = None):
-        if message:
-            self.message = message
+        self.message = message
         super().__init__(self.message)

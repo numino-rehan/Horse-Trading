@@ -11,7 +11,7 @@ def test_initial_horse_data():
 
 def test_set_winner_valid():
     manager = HorseManager()
-    horse_id = 2  # Fort Utopia initially has won=False
+    horse_id = 2 
     manager.set_winner(horse_id, won=True)
     assert manager.horse_data[horse_id]["won"] is True
 

@@ -10,7 +10,6 @@ def test_initial_inventory():
 
 def test_restock_inventory():
     manager = InventoryManager()
-    # Deplete inventory manually
     manager.inventory = {den: 0 for den in sorted(DENOMINATIONS)}
     manager.restock()
     assert manager.inventory == {den: MAX_STOCK for den in sorted(DENOMINATIONS)}

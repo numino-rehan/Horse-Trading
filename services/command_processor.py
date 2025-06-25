@@ -5,6 +5,7 @@ from command_core import CommandContext, CommandRegistry
 from config.constants import COMMAND_LIST
 from exceptions import InvalidCommandException
 from model import HorseManager, InventoryManager
+from utils.decorators import log_and_handle_errors
 from utils.loger_config import setup_logger
 
 from .cash_dispenser import CashDispenser
@@ -13,81 +14,48 @@ logger = setup_logger("services.command_processor")
 
 
 class CommandProcessor:
-    """
-    Processes user commands by delegating to appropriate command handlers.
-    """
-
     def __init__(self) -> None:
-        """
-        Initialize CommandProcessor with core components and register commands.
-        """
-        try:
-            self.inventory_manager = InventoryManager()
-            self.horse_manager = HorseManager()
-            self.cash_dispenser = CashDispenser(self.inventory_manager)
+        self.inventory_manager = InventoryManager()
+        self.horse_manager = HorseManager()
+        self.cash_dispenser = CashDispenser(self.inventory_manager)
 
-            self.context = CommandContext(
-                self.inventory_manager,
-                self.horse_manager,
-                self.cash_dispenser,
-            )
+        self.context = CommandContext(
+            self.inventory_manager,
+            self.horse_manager,
+            self.cash_dispenser,
+        )
 
-            self.registry = CommandRegistry()
-            self.registry.register(COMMAND_LIST["quit"], QuitCommand())
-            self.registry.register(COMMAND_LIST["restock"], RestockCommand())
-            self.registry.register(COMMAND_LIST["winner"], WinnerCommand())
-            self.registry.register(COMMAND_LIST["bet"], BetCommand())
+        self.registry = CommandRegistry()
+        self.registry.register(COMMAND_LIST["quit"], QuitCommand())
+        self.registry.register(COMMAND_LIST["restock"], RestockCommand())
+        self.registry.register(COMMAND_LIST["winner"], WinnerCommand())
+        self.registry.register(COMMAND_LIST["bet"], BetCommand())
 
-            logger.info(
-                "CommandProcessor initialized and commands registered.")
-        except Exception:
-            logger.error(
-                "Failed to initialize CommandProcessor.", exc_info=True)
-            raise
+        logger.info(
+            "CommandProcessor initialized and commands registered.")
 
+    @log_and_handle_errors("Failed to process command")
     def process_commands(self, command: str) -> Optional[None]:
-        """
-        Process a command string by parsing and executing the corresponding command.
+        command = command.strip().lower()
+        if not command:
+            logger.debug("Received empty command; ignoring.")
+            return
 
-        Args:
-            command (str): The raw input command string.
+        cmd_parts = command.split()
+        keyword = cmd_parts[0]
 
-        Raises:
-            InvalidCommandException: If the command is not recognized.
+        if keyword.isdigit():
+            command_obj = self.registry.get("bet")
+            args = cmd_parts
+        else:
+            command_obj = self.registry.get(keyword)
+            args = cmd_parts[1:]
 
-        Returns:
-            None
-        """
-        try:
-            command = command.strip().lower()
-            if not command:
-                logger.debug("Received empty command; ignoring.")
-                return
+        logger.info(f"Command: {command}, Keyword: {keyword}, Args: {args}")
 
-            cmd_parts = command.split()
-            keyword = cmd_parts[0]
+        if not command_obj:
+            logger.warning(f"Invalid command received: '{command}'")
+            raise InvalidCommandException(f"Unrecognized command: '{command}'")
 
-            # Special handling: if first part is a digit, treat as 'bet' command
-            if keyword.isdigit():
-                command_obj = self.registry.get("bet")
-                args = cmd_parts
-            else:
-                command_obj = self.registry.get(keyword)
-                args = cmd_parts[1:]
-
-            logger.info(f"Command: {command}, Keyword: {keyword}, Args: {args}")
-
-            if not command_obj:
-                logger.warning(f"Invalid command received: '{command}'")
-                raise InvalidCommandException(
-                    f"Unrecognized command: '{command}'")
-
-            logger.debug(f"Executing command '{keyword}' with args: {args}")
-            command_obj.execute(" ".join(args), self.context)
-
-        except InvalidCommandException:
-            raise  # Let known exceptions propagate
-        except Exception as e:
-            logger.error(
-                f"Error while processing command '{command}': {e}", exc_info=True)
-            raise
+        logger.debug(f"Executing command '{keyword}' with args: {args}")
+        command_obj.execute(" ".join(args), self.context)
